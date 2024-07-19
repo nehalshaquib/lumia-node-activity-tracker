@@ -24,7 +24,12 @@ const contractAbi = JSON.parse(fs.readFileSync(contractAbiPath, 'utf8'));
 const contract = new web3.eth.Contract(contractAbi, CONTRACT_ADDRESS);
 
 // Enable CORS for all routes
-app.use(cors());
+// Enable CORS for all routes
+app.use(cors({
+  origin: '*', // Allow all origins (You can specify your frontend URL here for better security)
+  methods: ['GET', 'POST'], // Specify allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Specify allowed headers
+}));
 
 app.get('/api/nodeCount', async (req, res) => {
   try {
