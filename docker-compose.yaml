@@ -13,3 +13,5 @@ services:
       - "80:80"
     depends_on:
       - backend
+    environment:
+      - REACT_APP_API_BASE_URL=http://backend:3001  # Use Docker service name

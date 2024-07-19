@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Tracker.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Tracker = () => {
   const [nodeCount, setNodeCount] = useState('Loading...');
   const [pricePerNode, setPricePerNode] = useState('Loading...');
@@ -12,14 +14,14 @@ const Tracker = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const nodeCountResponse = await axios.get('http://localhost:3001/api/nodeCount');
+      const nodeCountResponse = await axios.get('${API_BASE_URL}/api/nodeCount');
       setNodeCount(nodeCountResponse.data.nodeCount);
 
-      const pricePerNodeResponse = await axios.get('http://localhost:3001/api/pricePerNode');
+      const pricePerNodeResponse = await axios.get('${API_BASE_URL}/api/pricePerNode');
       setPricePerNode(`${pricePerNodeResponse.data.price} USDT`);
       setLeftAtThisPrice(pricePerNodeResponse.data.leftAtThisPrice);
 
-      const isSaleActiveResponse = await axios.get('http://localhost:3001/api/isSaleActive');
+      const isSaleActiveResponse = await axios.get('${API_BASE_URL}/api/isSaleActive');
       setIsSaleActive(isSaleActiveResponse.data.isSaleActive ? 'Active' : 'Inactive');
     } catch (error) {
       console.error('Error fetching data:', error);
