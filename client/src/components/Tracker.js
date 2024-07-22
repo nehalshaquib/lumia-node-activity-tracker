@@ -104,7 +104,7 @@ const Tracker = () => {
         <table>
           <thead>
             <tr>
-              <th>Contract Name</th>
+              <th>Name</th>
               <th>Address</th>
               <th>USDT Balance</th>
               <th>MATIC Balance</th>
