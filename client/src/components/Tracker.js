@@ -10,6 +10,12 @@ const Tracker = () => {
   const [leftAtThisPrice, setLeftAtThisPrice] = useState('Loading...');
   const [isSaleActive, setIsSaleActive] = useState('Loading...');
   const [loading, setLoading] = useState(false);
+  const [balances, setBalances] = useState({
+    nodePurchaseContract: { address: '', usdt: 'Loading...', matic: 'Loading...' },
+    lumiaAddress: { address: '', usdt: 'Loading...', matic: 'Loading...' },
+    partnerAddress: { address: '', usdt: 'Loading...', matic: 'Loading...' },
+    providerAddress: { address: '', usdt: 'Loading...', matic: 'Loading...' }
+  });
 
   const fetchData = async () => {
     setLoading(true);
@@ -23,6 +29,34 @@ const Tracker = () => {
 
       const isSaleActiveResponse = await axios.get(`${API_BASE_URL}/api/isSaleActive`);
       setIsSaleActive(isSaleActiveResponse.data.isSaleActive ? 'Active' : 'Inactive');
+
+      const nodePurchaseContractBalanceResponse = await axios.get(`${API_BASE_URL}/api/nodePurchaseContractBalance`);
+      const lumiaAddressBalanceResponse = await axios.get(`${API_BASE_URL}/api/lumiaAddressBalance`);
+      const partnerAddressBalanceResponse = await axios.get(`${API_BASE_URL}/api/partnerAddressBalance`);
+      const providerAddressBalanceResponse = await axios.get(`${API_BASE_URL}/api/providerAddressBalance`);
+
+      setBalances({
+        nodePurchaseContract: {
+          address: nodePurchaseContractBalanceResponse.data.address,
+          usdt: formatBalance(nodePurchaseContractBalanceResponse.data.usdtBalance, 'USDT'),
+          matic: formatBalance(nodePurchaseContractBalanceResponse.data.maticBalance, 'MATIC')
+        },
+        lumiaAddress: {
+          address: lumiaAddressBalanceResponse.data.address,
+          usdt: formatBalance(lumiaAddressBalanceResponse.data.usdtBalance, 'USDT'),
+          matic: formatBalance(lumiaAddressBalanceResponse.data.maticBalance, 'MATIC')
+        },
+        partnerAddress: {
+          address: partnerAddressBalanceResponse.data.address,
+          usdt: formatBalance(partnerAddressBalanceResponse.data.usdtBalance, 'USDT'),
+          matic: formatBalance(partnerAddressBalanceResponse.data.maticBalance, 'MATIC')
+        },
+        providerAddress: {
+          address: providerAddressBalanceResponse.data.address,
+          usdt: formatBalance(providerAddressBalanceResponse.data.usdtBalance, 'USDT'),
+          matic: formatBalance(providerAddressBalanceResponse.data.maticBalance, 'MATIC')
+        }
+      });
     } catch (error) {
       console.error('Error fetching data:', error);
       setNodeCount('Error fetching data');
@@ -31,6 +65,10 @@ const Tracker = () => {
       setIsSaleActive('Error fetching data');
     }
     setLoading(false);
+  };
+
+  const formatBalance = (balance, unit) => {
+    return `${parseFloat(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${unit}`;
   };
 
   useEffect(() => {
@@ -61,6 +99,45 @@ const Tracker = () => {
           <p>{isSaleActive}</p>
         </div>
       </main>
+      <div className="table-container">
+        <h2>Contract Balances</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Contract Name</th>
+              <th>Address</th>
+              <th>USDT Balance</th>
+              <th>MATIC Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Node Purchase Contract</td>
+              <td>{balances.nodePurchaseContract.address}</td>
+              <td>{balances.nodePurchaseContract.usdt}</td>
+              <td>{balances.nodePurchaseContract.matic}</td>
+            </tr>
+            <tr>
+              <td>Lumia Address</td>
+              <td>{balances.lumiaAddress.address}</td>
+              <td>{balances.lumiaAddress.usdt}</td>
+              <td>{balances.lumiaAddress.matic}</td>
+            </tr>
+            <tr>
+              <td>Partner Address</td>
+              <td>{balances.partnerAddress.address}</td>
+              <td>{balances.partnerAddress.usdt}</td>
+              <td>{balances.partnerAddress.matic}</td>
+            </tr>
+            <tr>
+              <td>Provider Address</td>
+              <td>{balances.providerAddress.address}</td>
+              <td>{balances.providerAddress.usdt}</td>
+              <td>{balances.providerAddress.matic}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <footer>
         <button onClick={fetchData} disabled={loading}>
           Refresh
